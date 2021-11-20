@@ -169,15 +169,16 @@ template<class T> class MyTree{
 			}
 			
 		}
-		MyNode* Insert(MyNode* p,T& value){
+		MyNode* Insert(MyNode* p,T& value,int& size){
 			if(p==nullptr){
+				size++;
 				return new MyNode(value,nullptr,nullptr,1);
 			}
 			char BC_result=Bit_Comparison(value,p->data);
 			if(BC_result == 1){
-				p->left = this->Insert(p->left,value);
+				p->left = this->Insert(p->left,value,size);
 			}else if(BC_result == -1){
-				p->right = this->Insert(p->right,value);
+				p->right = this->Insert(p->right,value,size);
 			}
 			return p->Node_Balance();
 		}
@@ -196,17 +197,19 @@ template<class T> class MyTree{
 				return this->Node_Balance();
 			}
 		}
-		MyNode* Remove(MyNode* p,T& value){
+		MyNode* Remove(MyNode* p,T& value,int& size){
 			
 			if(p==nullptr){
+				size--;
 				return nullptr;
 			}
 			char BC_result=Bit_Comparison(value,p->data);
 			if(BC_result==1){
-				p->left = this->Remove(p->left,value);
+				p->left = this->Remove(p->left,value,size);
 			}else if(BC_result==-1){
-				p->right = this->Remove(p->right,value);
+				p->right = this->Remove(p->right,value,size);
 			}else{
+				size--;
 				MyNode* l=p->left;
 				MyNode* r=p->right;
 				p->delete_flag=false;
@@ -283,16 +286,18 @@ template<class T> class MyTree{
 	
 	void insert(T& value){
 		MyNode temp;
-		this->size_++;
-		root_=temp.Insert(root_,value);
+		int new_size=this->size_;
+		root_=temp.Insert(root_,value,new_size);
+		this->size_=new_size;
 		return;
 	}
 	void erase(T& value){
 		
 		if(this->find(value)){
 			MyNode temp;
-			this->root_=temp.Remove(this->root_,value);
-			this->size_--;
+			int new_size=this->size_;
+			this->root_=temp.Remove(this->root_,value,new_size);
+			this->size_=new_size;
 			return;
 		}else{
 			std::cout<<"Value = "<<value<<" didn't find"<<std::endl;
